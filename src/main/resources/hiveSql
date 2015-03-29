@@ -1,0 +1,61 @@
+"
+create external table USER_BASE (
+id STRING,
+pack STRING,
+vip_level STRING,
+ol_days INT
+)
+row format delimited fields terminated by '\t';
+"
+
+"
+create external table USER_CALL_DETAIL (
+id STRING,
+time BIGINT,
+out BOOLEAN,
+duration INT,
+location STRING
+)
+row format delimited fields terminated by '\t';
+"
+
+"
+create external table USER_TEXT_DETAIL (
+id STRING,
+time BIGINT,
+out BOOLEAN,
+location STRING,
+content STRING
+)
+row format delimited fields terminated by '\t';
+"
+
+"
+create external table USER_NET_DETAIL (
+id STRING,
+time BIGINT,
+location STRING,
+content STRING
+)
+row format delimited fields terminated by '\t';
+"
+
+"
+create external table USER_CONSUME_DETAIL (
+id STRING,
+time BIGINT,
+consume MAP<STRING,FLOAT>
+)
+row format delimited fields terminated by '\t' COLLECTION ITEMS TERMINATED BY ',' MAP KEYS TERMINATED BY ':';
+"
+
+"
+create external table CALL_RECORD (
+from_id STRING,
+to_id STRING,
+date LONG,
+time BIGINT,
+consume MAP<STRING,FLOAT>
+)
+row format delimited fields terminated by '\t' COLLECTION ITEMS TERMINATED BY ',' MAP KEYS TERMINATED BY ':';
+"
