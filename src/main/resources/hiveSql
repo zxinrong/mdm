@@ -50,12 +50,14 @@ row format delimited fields terminated by '\t' COLLECTION ITEMS TERMINATED BY ',
 "
 
 "
-create external table CALL_RECORD (
+create table CALL_RECORD_TBL (
 from_id STRING,
 to_id STRING,
-date LONG,
 time BIGINT,
-consume MAP<STRING,FLOAT>
+duration INT,
+location STRING
 )
-row format delimited fields terminated by '\t' COLLECTION ITEMS TERMINATED BY ',' MAP KEYS TERMINATED BY ':';
+row format delimited fields terminated by '\t';
 "
+
+load data local inpath '/home/hadoop/tmpdir/call_detail' into table call_record;
