@@ -1,0 +1,9 @@
+#example
+nohup
+ ./bin/spark-submit
+ --master yarn-cluster
+ --class com.chinaunicom.datalabs.mdm.spark.SparkKMeans
+ lib/mdm.jar
+ /data/stock_files/
+ 2>&1 < /dev/null &
+

@@ -85,12 +85,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>fastjson</artifactId>
-            <version>1.2.2</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
             <version>${json.version}</version>
@@ -115,22 +109,26 @@
         </dependency>
 
 
-
-
-
-
-
-        <!--<dependency>-->
-            <!--<groupId>org.apache.hive</groupId>-->
-            <!--<artifactId>hive-exec</artifactId>-->
-            <!--<version>1.1.0</version>-->
-        <!--</dependency>-->
-
         <!--<dependency>-->
             <!--<groupId>org.apache.spark</groupId>-->
             <!--<artifactId>spark-core_2.11</artifactId>-->
             <!--<version>1.2.0</version>-->
         <!--</dependency>-->
+
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-mllib_2.10</artifactId>
+            <version>1.2.0</version>
+        </dependency>
+
+        <!--<dependency>-->
+            <!--<groupId>org.apache.hive</groupId>-->
+            <!--<artifactId>hive-exec</artifactI
+            d>-->
+            <!--<version>1.1.0</version>-->
+        <!--</dependency>-->
+
+
 
         <!--<dependency>-->
             <!--<groupId>org.apache.mahout</groupId>-->
