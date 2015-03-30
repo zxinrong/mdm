@@ -18,10 +18,10 @@ import java.io.IOException;
 import java.util.StringTokenizer;
 
 /**
- *
- * Created by zhangxr103 on 2015/3/30.
+ * 生成用户通话明细数据
+ * Created by zhangxr103 on 2014/10/30.
  */
-public class SimpleDealing {
+public class SRC2CallDetail {
 
     public static class MapWork
             extends Mapper<Object, Text, Text, IntWritable> {
@@ -68,15 +68,6 @@ public class SimpleDealing {
     }
 
 
-    public static class PartitionWork extends Partitioner<LongWritable,Text> {
-
-        @Override
-        public int getPartition(LongWritable key, Text value, int numPartitions) {
-
-            return 0;
-        }
-    }
-
     public static void main(String[] args) throws Exception {
         Configuration conf = new Configuration();
         String[] otherArgs = new GenericOptionsParser(conf, args).getRemainingArgs();
@@ -85,7 +76,7 @@ public class SimpleDealing {
             System.exit(2);
         }
         Job job = new Job(conf, "origin manage");
-        job.setJarByClass(SimpleDealing.class);
+        job.setJarByClass(SRC2CallDetail.class);
         job.setMapperClass(MapWork.class);
 //        job.setCombinerClass(ReduceWork.class);
         job.setReducerClass(ReduceWork.class);
