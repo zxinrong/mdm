@@ -37,8 +37,11 @@ public class productor {
         initReciever(frequent_user);//初始化该手机用户的常用联系人
 
         //人们总是在两个地方打电话，家里和办公室,平均分布
-        int home_locate=rd.nextInt(areaRange);
-        int work_locate=rd.nextInt(areaRange);
+        int shome_locate=rd.nextInt(areaRange);
+        int swork_locate=rd.nextInt(areaRange);
+
+        int rhome_locate=rd.nextInt(areaRange);
+        int rwork_locate=rd.nextInt(areaRange);
 
         Calendar cal=Calendar.getInstance();
         //每个常用联系人在每天都可能发生的通话次数和时长
@@ -47,7 +50,7 @@ public class productor {
             for(long reciever:frequent_user) {
                 int calls = GRandom(3);//一天内与一个人的通话次数平均3次
                 while (calls-- > 0){
-                    recordCalls(bw, phone_number, reciever, cal.getTimeInMillis(), GRandom(25), rd.nextInt(2) < 1 ? home_locate : work_locate);
+                    recordCalls(bw, phone_number, reciever, cal.getTimeInMillis(), GRandom(25), rd.nextInt(2) < 1 ? shome_locate : swork_locate,rd.nextInt(2) < 1 ? rhome_locate : rwork_locate);
                     count++;
                 }
             }
@@ -67,8 +70,8 @@ public class productor {
         return number>0?number:0;
     }
 
-    private static void recordCalls(BufferedWriter bw, long phone_number, long reciever, long daySeq, int duration, int locate) throws IOException {
-        String line=phone_number + "\t" + reciever + "\t" + daySeq + "\t" + duration + "\t" + locate;
+    private static void recordCalls(BufferedWriter bw, long phone_number, long reciever, long daySeq, int duration, int send_locate,int reciece_locate) throws IOException {
+        String line=phone_number + "\t" + reciever + "\t" + daySeq + "\t" + duration + "\t" + send_locate+"\t"+reciece_locate;
 //        System.out.println(line);
         bw.append(line + "\n");
     }

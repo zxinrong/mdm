@@ -1,6 +1,6 @@
 "
-create external table USER_BASE (
-id STRING,
+create table USER_BASE (
+id BIGINT,
 pack STRING,
 vip_level STRING,
 ol_days INT
@@ -9,8 +9,9 @@ row format delimited fields terminated by '\t';
 "
 
 "
-create external table USER_CALL_DETAIL (
-id STRING,
+create table USER_CALL_DETAIL (
+id BIGINT,
+object BIGINT,
 time BIGINT,
 out BOOLEAN,
 duration INT,
@@ -20,8 +21,8 @@ row format delimited fields terminated by '\t';
 "
 
 "
-create external table USER_TEXT_DETAIL (
-id STRING,
+create  table USER_TEXT_DETAIL (
+id BIGINT,
 time BIGINT,
 out BOOLEAN,
 location STRING,
@@ -32,7 +33,7 @@ row format delimited fields terminated by '\t';
 
 "
 create external table USER_NET_DETAIL (
-id STRING,
+id BIGINT,
 time BIGINT,
 location STRING,
 content STRING
@@ -42,7 +43,7 @@ row format delimited fields terminated by '\t';
 
 "
 create external table USER_CONSUME_DETAIL (
-id STRING,
+id BIGINT,
 time BIGINT,
 consume MAP<STRING,FLOAT>
 )
@@ -50,12 +51,13 @@ row format delimited fields terminated by '\t' COLLECTION ITEMS TERMINATED BY ',
 "
 
 "
-create table CALL_RECORD_TBL (
-from_id STRING,
-to_id STRING,
+create table CALL_RECORD (
+from_id BIGINT,
+to_id BIGINT,
 time BIGINT,
 duration INT,
-location STRING
+send_location INT,
+receive_location INT
 )
 row format delimited fields terminated by '\t';
 "
