@@ -72,10 +72,10 @@ public class SRC2CallDetail {
         Configuration conf = new Configuration();
         String[] otherArgs = new GenericOptionsParser(conf, args).getRemainingArgs();
         if (otherArgs.length != 2) {
-            System.err.println("Usage: Origin Manage <in> <out>");
+            System.err.println("Usage: hadoop -jar xx.jar SRC2NetDetail <in> <out>");
             System.exit(2);
         }
-        Job job = new Job(conf, "origin manage");
+        Job job = new Job(conf, "dealing user's call data");
         job.setJarByClass(SRC2CallDetail.class);
         job.setMapperClass(MapWork.class);
 //        job.setCombinerClass(ReduceWork.class);
