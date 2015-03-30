@@ -1,4 +1,4 @@
-package com.chinaunicom.datalabs.mdm.hadoop;
+package com.chinaunicom.datalabs.mdm.util;
 
 import org.apache.hadoop.io.WritableComparable;
 

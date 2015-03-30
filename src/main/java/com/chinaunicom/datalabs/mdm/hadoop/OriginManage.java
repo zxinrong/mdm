@@ -1,5 +1,6 @@
 package com.chinaunicom.datalabs.mdm.hadoop;
 
+import com.chinaunicom.datalabs.mdm.util.PairKey;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.*;
@@ -91,7 +92,7 @@ public class OriginManage {
         Job job = new Job(conf, "origin manage");
         job.setJarByClass(OriginManage.class);
         job.setMapperClass(MapWork.class);
-        job.setCombinerClass(ReduceWork.class);
+//        job.setCombinerClass(ReduceWork.class);
         job.setReducerClass(ReduceWork.class);
         job.setInputFormatClass(TextInputFormat.class);
         job.setMapOutputKeyClass(PairKey.class);
