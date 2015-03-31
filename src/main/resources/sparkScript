@@ -7,3 +7,4 @@ nohup
  /data/stock_files/
  2>&1 < /dev/null &
 
+hadoop jar mdm.jar com.chinaunicom.datalabs.mdm.hadoop.SimpleDealing  hdfs://namenode1:9000/user/hive/warehouse/bj_data.db/call_record/ hdfs://namenode1:9000/result/mdm
