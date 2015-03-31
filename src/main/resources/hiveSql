@@ -32,13 +32,20 @@ row format delimited fields terminated by '\t';
 "
 
 "
-create external table USER_NET_DETAIL (
-id BIGINT,
-time BIGINT,
-location STRING,
-content STRING
+create table net_detail (
+frist_level STRING ,
+second_level STRING,
+client STRING,
+up_flow BIGINT,
+down_flow BIGINT,
+total_flow BIGINT,
+total_time BIGINT,
+total_count INT,
+provice_id INT,
+user_id BIGINT,
+business_type STRING
 )
-row format delimited fields terminated by '\t';
+row format delimited fields terminated by ',';
 "
 
 "
@@ -62,4 +69,6 @@ receive_location INT
 row format delimited fields terminated by '\t';
 "
 
-load data local inpath '/home/hadoop/tmpdir/call_detail' into table call_record;
+load data local inpath '/Data/boraydata/DataNet/netdata' into table net_detail;
+
+create table net_sort  as select
