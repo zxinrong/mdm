@@ -71,4 +71,54 @@ row format delimited fields terminated by '\t';
 
 load data local inpath '/Data/boraydata/DataNet/netdata' into table net_detail;
 
-create table net_sort  as select
+ create table user_interest
+ PARTITIONED BY()
+ row format delimited fields terminated by '\t'
+
+ as
+ select provice_id,user_id,item_code,item_name,
+ total_flow,total_count,total_time,up_flow,down_flow,
+ client_type
+ sort by user_id,item_code;
+
+
+  create table ist as
+  select user_id
+  from net_detail limit 10;
+
+
+create table net_test (
+item_code INT ,
+item_name INT,
+client_type STRING,
+up_flow BIGINT,
+down_flow BIGINT,
+total_flow BIGINT,
+total_time BIGINT,
+total_count INT,
+province_id INT,
+user_id BIGINT,
+busi_type STRING
+)
+row format delimited fields terminated by ',';
+
+load data local inpath '/Data/boraydata/netdata/netinfo_00' into table net_test;
+
+
+
+create table test (
+item_code INT ,
+item_name STRING,
+client_type STRING,
+up_flow BIGINT,
+down_flow BIGINT,
+total_flow BIGINT,
+total_time BIGINT,
+total_count INT,
+province_id INT,
+user_id BIGINT,
+busi_type STRING
+)
+row format delimited fields terminated by '\t';
+
+load data local inpath '/home/hadoop/work/file' into table test;
