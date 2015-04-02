@@ -1,6 +1,6 @@
 package com.chinaunicom.datalabs.mdm.hadoop;
 
-import com.chinaunicom.datalabs.mdm.util.PairKey;
+import com.chinaunicom.datalabs.mdm.util.PairWritable;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.*;
@@ -25,7 +25,7 @@ public class OriginManage {
 
 
     public static class MapWork
-            extends Mapper<Object, Text, PairKey, IntWritable> {
+            extends Mapper<Object, Text, PairWritable, IntWritable> {
 
         public void map(Object key, Text value, Context context
         ) throws IOException, InterruptedException {
@@ -39,24 +39,42 @@ public class OriginManage {
 
             IntWritable recieve_location=new IntWritable(Integer.parseInt(itr.nextToken()));
 
-            PairKey<LongWritable, LongWritable> form_to=new PairKey<LongWritable, LongWritable>(from,to);
-            PairKey<LongWritable, IntWritable> send_time_loc=new PairKey<LongWritable, IntWritable>(time,send_location);
-            PairKey<PairKey<LongWritable, LongWritable>, PairKey<LongWritable, IntWritable>> send_final_key=new PairKey<PairKey<LongWritable, LongWritable>, PairKey<LongWritable, IntWritable>>(form_to,send_time_loc);
+            PairWritable<LongWritable, LongWritable> form_to=new PairWritable<LongWritable, LongWritable>();
+            form_to.setFirstKey(from);
+            form_to.setSecondKey(to);
+
+
+            PairWritable<LongWritable, IntWritable> send_time_loc=new PairWritable<LongWritable, IntWritable>();
+            send_time_loc.setFirstKey(time);
+            send_time_loc.setSecondKey(send_location);
+
+            PairWritable<PairWritable<LongWritable, LongWritable>, PairWritable<LongWritable, IntWritable>> send_final_key=new PairWritable<PairWritable<LongWritable, LongWritable>, PairWritable<LongWritable, IntWritable>>();
+            send_final_key.setFirstKey(form_to);
+            send_final_key.setSecondKey(send_time_loc);
+
             context.write(send_final_key,duration);
 
-            PairKey<LongWritable, LongWritable> to_from=new PairKey<LongWritable, LongWritable>(to,from);
-            PairKey<LongWritable, IntWritable> receive_time_lob=new PairKey<LongWritable, IntWritable>(time,recieve_location);
-            PairKey<PairKey<LongWritable, LongWritable>, PairKey<LongWritable, IntWritable>> receive_final_key=new PairKey<PairKey<LongWritable, LongWritable>, PairKey<LongWritable, IntWritable>>(to_from,receive_time_lob);
+            PairWritable<LongWritable, LongWritable> to_from=new PairWritable<LongWritable, LongWritable>();
+            to_from.setFirstKey(to);
+            to_from.setSecondKey(from);
+
+            PairWritable<LongWritable, IntWritable> receive_time_loc=new PairWritable<LongWritable, IntWritable>();
+            receive_time_loc.setFirstKey(time);
+            receive_time_loc.setSecondKey(recieve_location);
+
+            PairWritable<PairWritable<LongWritable, LongWritable>, PairWritable<LongWritable, IntWritable>> receive_final_key=new PairWritable<PairWritable<LongWritable, LongWritable>, PairWritable<LongWritable, IntWritable>>();
+            receive_final_key.setFirstKey(to_from);
+            receive_final_key.setSecondKey(receive_time_loc);
             context.write(receive_final_key,duration);
 
         }
     }
 
     public static class ReduceWork
-            extends Reducer<PairKey,IntWritable,Text,Text> {
+            extends Reducer<PairWritable,IntWritable,Text,Text> {
         private Text result = new Text();
 
-        public void reduce(PairKey key, Iterable<IntWritable> values,
+        public void reduce(PairWritable key, Iterable<IntWritable> values,
                            Context context
         ) throws IOException, InterruptedException {
             int sum = 0;
@@ -95,7 +113,7 @@ public class OriginManage {
 //        job.setCombinerClass(ReduceWork.class);
         job.setReducerClass(ReduceWork.class);
         job.setInputFormatClass(TextInputFormat.class);
-        job.setMapOutputKeyClass(PairKey.class);
+        job.setMapOutputKeyClass(PairWritable.class);
         job.setMapOutputValueClass(IntWritable.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(Text.class);
