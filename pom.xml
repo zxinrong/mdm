@@ -142,6 +142,7 @@
     <build>
         <finalName>mdm</finalName>
         <plugins>
+
             <plugin>
                 <!-- NOTE: We don't need a groupId specification because the group is
                 org.apache.maven.plugins ...which is assumed by default.
@@ -159,6 +160,28 @@
                     </archive>
                 </configuration>
             </plugin>
+
+            <!--<plugin>-->
+                <!--<groupId>org.apache.maven.plugins</groupId>-->
+                <!--<artifactId>maven-shade-plugin</artifactId>-->
+                <!--<version>2.0</version>-->
+                <!--<configuration>-->
+                    <!--<transformers>-->
+                        <!--<transformer implementation = "org.apache.maven.plugins.shade.resource.MainifestResourceTransformer">-->
+                            <!--<mainClass>com.xun.pf.sayHello.HelloWorld</mainClass>-->
+                        <!--</transformer>-->
+                    <!--</transformers>-->
+                <!--</configuration>-->
+                <!--<executions>-->
+                    <!--<execution>-->
+                        <!--<phase>package</phase>-->
+                        <!--<goals>-->
+                            <!--<goal>shade</goal>-->
+                        <!--</goals>-->
+                    <!--</execution>-->
+                <!--</executions>-->
+            <!--</plugin>-->
+
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.1</version>

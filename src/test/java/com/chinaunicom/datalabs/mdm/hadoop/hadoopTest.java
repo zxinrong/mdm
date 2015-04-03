@@ -22,7 +22,7 @@ public class hadoopTest {
 
     @Test
     public void test(){
-        String []temp="3481489715844665,,2,19871205,20111104,11,185,73502,Android 4.2,1,30AAAAAA,99002138,03,0,0,,01,0,125.2,470,3931".split(",");
+        String []temp="1012071111320030\t0204\t工具软件\t26\t197018\t122\tW\t30AAAAAA\n".split("\\t");
         for(String ss:temp){
             System.out.print(ss+"\t");
         }

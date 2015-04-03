@@ -7,7 +7,6 @@ import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
-import org.apache.hadoop.mapreduce.Partitioner;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
@@ -15,54 +14,29 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.GenericOptionsParser;
 
 import java.io.IOException;
-import java.util.StringTokenizer;
 
 /**
  * 生成用户基础信息
  * Created by zhangxr103 on 2014/10/30.
  */
-public class SRC2UserInfo {
+public class UniqMR {
 
     public static class MapWork
-            extends Mapper<Object, Text, Text, IntWritable> {
-
-        public static Text key_str = new Text();
+            extends Mapper<Object, Text, Text, Text> {
 
         public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
-            StringTokenizer itr = new StringTokenizer(value.toString());
-            LongWritable from = new LongWritable(Long.parseLong(itr.nextToken()));
-            LongWritable to = new LongWritable(Long.parseLong(itr.nextToken()));
-            LongWritable time = new LongWritable(Long.parseLong(itr.nextToken()));
-            IntWritable duration = new IntWritable(Integer.parseInt(itr.nextToken()));
-            IntWritable send_location = new IntWritable(Integer.parseInt(itr.nextToken()));
-            IntWritable recieve_location = new IntWritable(Integer.parseInt(itr.nextToken()));
-
-            key_str.set(from.get() + "\t" + to.get() + "\t" + time.get() + "\t" + send_location.get() + "\t" + 1);
-            context.write(key_str, duration);
-
-            key_str.set(to.get() + "\t" + from.get() + "\t" + time.get() + "\t" + recieve_location.get() + "\t" + 0);
-            context.write(key_str, duration);
-
+            String ss[]=value.toString().trim().split("\\t");
+            Text key_word=new Text(Long.parseLong(ss[0])+"\t"+Integer.parseInt(ss[1]));
+            context.write(key_word, value);
         }
     }
 
     public static class ReduceWork
-            extends Reducer<Text, IntWritable, Text, Text> {
-        private Text result = new Text();
-
-        public void reduce(Text key, Iterable<IntWritable> values,
+            extends Reducer<Text,Text, Text, Text> {
+        public void reduce(Text key, Iterable<Text> values,
                            Context context
         ) throws IOException, InterruptedException {
-            int sum = 0;
-            int count = 0;
-
-            for (IntWritable val : values) {
-                sum += val.get();
-                count++;
-            }
-
-            result.set(sum + "\t" + count);
-            context.write(key, result);
+             context.write(new Text(), values.iterator().next());
         }
     }
 
@@ -73,15 +47,15 @@ public class SRC2UserInfo {
             System.err.println("Usage: hadoop -jar xx.jar SRC2UserInfo <in> <out>");
             System.exit(2);
         }
-        Job job = new Job(conf, "dealing user's base data");
-        job.setJarByClass(SRC2UserInfo.class);
+        Job job = new Job(conf, "uniq data");
+        job.setJarByClass(UniqMR.class);
         job.setMapperClass(MapWork.class);
 //        job.setCombinerClass(ReduceWork.class);
         job.setReducerClass(ReduceWork.class);
         job.setInputFormatClass(TextInputFormat.class);
 
         job.setMapOutputKeyClass(Text.class);
-        job.setMapOutputValueClass(IntWritable.class);
+        job.setMapOutputValueClass(Text.class);
 
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(Text.class);
