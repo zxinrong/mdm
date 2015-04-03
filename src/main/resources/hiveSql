@@ -1,4 +1,4 @@
-"
+
 create table USER_BASE (
 id BIGINT,
 pack STRING,
@@ -6,9 +6,7 @@ vip_level STRING,
 ol_days INT
 )
 row format delimited fields terminated by '\t';
-"
 
-"
 create table USER_CALL_DETAIL (
 id BIGINT,
 object BIGINT,
@@ -18,9 +16,8 @@ duration INT,
 location STRING
 )
 row format delimited fields terminated by '\t';
-"
 
-"
+
 create  table USER_TEXT_DETAIL (
 id BIGINT,
 time BIGINT,
@@ -29,9 +26,8 @@ location STRING,
 content STRING
 )
 row format delimited fields terminated by '\t';
-"
 
-"
+
 create table net_detail (
 frist_level STRING ,
 second_level STRING,
@@ -46,18 +42,15 @@ user_id BIGINT,
 business_type STRING
 )
 row format delimited fields terminated by ',';
-"
 
-"
+
 create external table USER_CONSUME_DETAIL (
 id BIGINT,
 time BIGINT,
 consume MAP<STRING,FLOAT>
 )
 row format delimited fields terminated by '\t' COLLECTION ITEMS TERMINATED BY ',' MAP KEYS TERMINATED BY ':';
-"
 
-"
 create table CALL_RECORD (
 from_id BIGINT,
 to_id BIGINT,
@@ -66,21 +59,15 @@ duration INT,
 send_location INT,
 receive_location INT
 )
-row format delimited fields terminated by '\t';
-"
+row format delimited fields terminated by '\t'
+load data local inpath '/Data/boraydata/DataNet/netdata' into table net_detail;、
 
-load data local inpath '/Data/boraydata/DataNet/netdata' into table net_detail;
+#从原始数据中构建用户兴趣标签库
+create table user_interest as
+select province_id,user_id,item_code,item_name,
+total_flow,total_count,total_time,up_flow,down_flow,
+client_type, busi_type from net_detail where user_id is not null
+order by user_id,total_flow desc;
 
- create table user_interest as
- select province_id,user_id,item_code,item_name,
- total_flow,total_count,total_time,up_flow,down_flow,
- client_type, busi_type from net_detail where user_id is not null
- order by user_id,total_flow desc;
-
-
-
- create table interest_relate_user as
- select item_code,item_name,province_id,user_id,
- total_flow,total_count,total_time,up_flow,down_flow,
- client_type, busi_type from net_detail where user_id is not null
- order by item_code,total_flow desc,total_count desc;
+#计算有标签的用户总户，共6897601
+from (select user_id ,count(total_count) from user_interest group by user_id)e select count(*);

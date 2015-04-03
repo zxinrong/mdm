@@ -48,7 +48,7 @@ public class OriginManage {
             send_time_loc.setFirstKey(time);
             send_time_loc.setSecondKey(send_location);
 
-            PairWritable<PairWritable<LongWritable, LongWritable>, PairWritable<LongWritable, IntWritable>> send_final_key=new PairWritable<PairWritable<LongWritable, LongWritable>, PairWritable<LongWritable, IntWritable>>();
+            PairWritable  send_final_key=new PairWritable();
             send_final_key.setFirstKey(form_to);
             send_final_key.setSecondKey(send_time_loc);
 
@@ -62,7 +62,7 @@ public class OriginManage {
             receive_time_loc.setFirstKey(time);
             receive_time_loc.setSecondKey(recieve_location);
 
-            PairWritable<PairWritable<LongWritable, LongWritable>, PairWritable<LongWritable, IntWritable>> receive_final_key=new PairWritable<PairWritable<LongWritable, LongWritable>, PairWritable<LongWritable, IntWritable>>();
+            PairWritable  receive_final_key=new PairWritable ();
             receive_final_key.setFirstKey(to_from);
             receive_final_key.setSecondKey(receive_time_loc);
             context.write(receive_final_key,duration);
