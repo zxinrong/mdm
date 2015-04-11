@@ -1,2 +1,3 @@
 # mdm
-make fake data,
+make data
+merge data by hadoop MR
