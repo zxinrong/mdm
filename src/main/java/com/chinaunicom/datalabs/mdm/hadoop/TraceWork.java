@@ -28,7 +28,7 @@ import java.util.*;
  * 生成用户基础信息
  * Created by zhangxr103 on 2014/10/30.
  */
-public class MergeAndOrder {
+public class TraceWork {
     public static HashMap<String,String> location= Maps.newHashMap();
     public static String location_file="site_list";
     private static double EARTH_RADIUS = 6378.137;//地球半径
@@ -169,12 +169,12 @@ public class MergeAndOrder {
         GenericOptionsParser parser=new GenericOptionsParser(conf, args);
         String[] otherArgs = parser.getRemainingArgs();
         if (otherArgs.length != 4) {
-            System.err.println("Usage: hadoop jar mdm.jar com.chinaunicom.datalabs.mdm.hadoop.MergeAndOrder -file site_list <in> <out>");
+            System.err.println("Usage: hadoop jar mdm.jar com.chinaunicom.datalabs.mdm.hadoop.TraceWork -file site_list <in> <out>");
             System.exit(2);
         }
         System.err.println(Arrays.toString(otherArgs));
         Job job = new Job(conf, "merge & order work");
-        job.setJarByClass(MergeAndOrder.class);
+        job.setJarByClass(TraceWork.class);
         job.setMapperClass(MapWork.class);
         job.setCombinerClass(ReduceWork.class);
         job.setReducerClass(ReduceWork.class);
