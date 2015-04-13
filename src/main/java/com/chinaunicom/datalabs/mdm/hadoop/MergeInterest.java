@@ -16,7 +16,7 @@ import org.apache.hadoop.util.GenericOptionsParser;
 import java.io.IOException;
 
 /**
- * 生成用户基础信息
+ * 合并行 
  * Created by zhangxr103 on 2014/10/30.
  */
 public class MergeInterest {
