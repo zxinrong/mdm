@@ -173,7 +173,7 @@ public class TraceWork {
             System.exit(2);
         }
         System.err.println(Arrays.toString(otherArgs));
-        Job job = new Job(conf, "merge & order work");
+        Job job = new Job(conf, "merge & order in a row");
         job.setJarByClass(TraceWork.class);
         job.setMapperClass(MapWork.class);
         job.setCombinerClass(ReduceWork.class);
