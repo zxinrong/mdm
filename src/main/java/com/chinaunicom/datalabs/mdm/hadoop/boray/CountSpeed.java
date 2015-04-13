@@ -28,7 +28,7 @@ import java.util.*;
  * 生成用户基础信息
  * Created by zhangxr103 on 2014/10/30.
  */
-public class TraceWork {
+public class CountSpeed {
     public static HashMap<String,String> location= Maps.newHashMap();
     public static String location_file="site_list";
     private static double EARTH_RADIUS = 6378.137;//地球半径
@@ -174,7 +174,7 @@ public class TraceWork {
         }
         System.err.println(Arrays.toString(otherArgs));
         Job job = new Job(conf, "merge & order in a row");
-        job.setJarByClass(TraceWork.class);
+        job.setJarByClass(CountSpeed.class);
         job.setMapperClass(MapWork.class);
         job.setCombinerClass(ReduceWork.class);
         job.setReducerClass(ReduceWork.class);
