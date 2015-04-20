@@ -174,7 +174,7 @@ public class AggreateTask {
             System.exit(2);
         }
         Job job = new Job(conf, "aggreagate work");
-        job.setJarByClass(OriginManage.class);
+        job.setJarByClass(AggreateTask.class);
         job.setMapperClass(MapWork.class);
         job.setPartitionerClass(ParitionWork.class);
         job.setCombinerClass(ReduceWork.class);

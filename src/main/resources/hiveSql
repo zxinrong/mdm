@@ -71,3 +71,5 @@ order by user_id,total_flow desc;
 
 #计算有标签的用户总户，共6897601
 from (select user_id ,count(total_count) from user_interest group by user_id)e select count(*);
+
+create table user_interest_tbl row format delimited fields terminated by '\t' as select * from user_interest;

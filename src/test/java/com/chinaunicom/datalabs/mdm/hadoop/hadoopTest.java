@@ -58,10 +58,16 @@ public class hadoopTest {
     }
 
     @Test
-    public void test3(){
+    public void test3() throws IOException {
 
-        System.out.println(GetDistance(116.41667,39.91667,121.43333,34.50000));
-
+//        System.out.println(GetDistance(116.41667,39.91667,121.43333,34.50000));
+        File file=new File("H:/000000_0");
+        BufferedReader reader=new BufferedReader(new FileReader(file));
+        String temp;
+        while ((temp=reader.readLine())!=null){
+            String []ss=temp.split(new String(new byte[]{1},"GB2312"));
+            System.out.println(Arrays.toString(ss));
+        }
     }
 
     private static double rad(double d)
