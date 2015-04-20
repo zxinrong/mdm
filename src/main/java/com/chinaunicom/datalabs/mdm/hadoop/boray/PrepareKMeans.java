@@ -42,7 +42,7 @@ public class PrepareKMeans {
                 String temp;
                 int count=0;
                 while ((temp=reader.readLine())!=null){
-                    String []ss=temp.split((new byte[]{1}).toString());
+                    String []ss=temp.split(new String(new byte[]{1}));
                     dimMap.put(ss[0].trim(), count++);
                 }
             }
@@ -74,7 +74,7 @@ public class PrepareKMeans {
                 String temp;
                 int count=0;
                 while ((temp=reader.readLine())!=null){
-                    String []ss=temp.split((new byte[]{1}).toString());
+                    String []ss=temp.split(new String(new byte[]{1}));
                     dimMap.put(ss[0].trim(), count++);
                 }
             }
@@ -112,7 +112,7 @@ public class PrepareKMeans {
                 String temp;
                 int count=0;
                 while ((temp=reader.readLine())!=null){
-                    String []ss=temp.split((new byte[]{1}).toString());
+                    String []ss=temp.split(new String(new byte[]{1}));
                     dimMap.put(ss[0].trim(), count++);
                 }
             }
