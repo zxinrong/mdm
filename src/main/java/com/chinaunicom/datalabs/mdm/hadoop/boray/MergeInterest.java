@@ -38,13 +38,13 @@ public class MergeInterest {
         ) throws IOException, InterruptedException {
             String word = "";
             String exclude="其他";
-            boolean firest=true;
+            boolean first=true;
             for(Text val:values){
                 String value=val.toString();
                 if (value.equals(exclude)) continue;
-                if(firest){
+                if(first){
                     word=value;
-                    firest=false;
+                    first=false;
                 }else if(!word.contains(value)){//去重
                     word+=","+val.toString();
                 }

@@ -13,7 +13,7 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.GenericOptionsParser;
-import org.apache.spark.sql.catalyst.expressions.In;
+import org.apache.mahout.math.*;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -22,60 +22,127 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
-import java.util.TreeMap;
 
 /**
  * 合并行 
  * Created by zhangxr103 on 2014/10/30.
  */
 public class PrepareKMeans {
-    public static HashMap<Long,Integer> location= Maps.newHashMap();
+    public static HashMap<String,Integer> dimMap = Maps.newHashMap();
 
     public static class MapWork
-            extends Mapper<Object, Text, LongWritable, Text> {
-
-        public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
-            String ss[]=value.toString().trim().split("\\t");
-            LongWritable key_word=new LongWritable(Long.parseLong(ss[0]));
-            context.write(key_word,new Text(ss[2]));
-        }
-    }
-
-
-    public static class ReduceWork
-            extends Reducer<LongWritable,Text, LongWritable, Text> {
-
+            extends Mapper<Object, Text, LongWritable, VectorWritable> {
         @Override
-        protected void setup(Context context) throws IOException, InterruptedException {
-            Path[] cacheFiles = DistributedCache.getLocalCacheFiles(context
-                    .getConfiguration());
-            File file=new File(cacheFiles[0].toString());
-            BufferedReader reader=new BufferedReader(new FileReader(file));
-            String temp;
-            int count=0;
-            while ((temp=reader.readLine())!=null){
-                String []ss=temp.split((new byte[]{1}).toString());
-                location.put(Long.parseLong(ss[0]),count++);
+        protected void setup(Mapper.Context context) throws IOException, InterruptedException {
+            if(dimMap.isEmpty()){
+                Path[] cacheFiles = DistributedCache.getLocalCacheFiles(context
+                        .getConfiguration());
+                File file=new File(cacheFiles[0].toString());
+                BufferedReader reader=new BufferedReader(new FileReader(file));
+                String temp;
+                int count=0;
+                while ((temp=reader.readLine())!=null){
+                    String []ss=temp.split((new byte[]{1}).toString());
+                    dimMap.put(ss[0].trim(), count++);
+                }
             }
         }
 
-        public void reduce(LongWritable key, Iterable<Text> values,
+
+
+        public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
+            String ss[]=value.toString().trim().split("\\t");
+            LongWritable key_word=new LongWritable(Long.parseLong(ss[0].trim()));
+            Vector v=new DenseVector(dimMap.size());
+            v.set(dimMap.get(ss[0]),Double.parseDouble(ss[5]));
+            VectorWritable vw=new VectorWritable();
+            vw.set(v);
+            context.write(key_word,vw);
+        }
+    }
+
+    public static class CombineWork
+            extends Reducer<LongWritable,VectorWritable, LongWritable, VectorWritable> {
+
+        @Override
+        protected void setup(Context context) throws IOException, InterruptedException {
+            if(dimMap.isEmpty()){
+                Path[] cacheFiles = DistributedCache.getLocalCacheFiles(context
+                        .getConfiguration());
+                File file=new File(cacheFiles[0].toString());
+                BufferedReader reader=new BufferedReader(new FileReader(file));
+                String temp;
+                int count=0;
+                while ((temp=reader.readLine())!=null){
+                    String []ss=temp.split((new byte[]{1}).toString());
+                    dimMap.put(ss[0].trim(), count++);
+                }
+            }
+        }
+
+        public void reduce(LongWritable key, Iterable<VectorWritable> values,
+                           Context context
+        ) throws IOException, InterruptedException {
+            Vector v=new DenseVector(dimMap.size());
+            for(VectorWritable e:values){
+                Vector tmp=e.get();
+                for(int i=0;i< tmp.size();i++){
+                    if(tmp.get(i)>0){
+                        v.set(i,tmp.get(i));
+                    }
+                }
+            }
+            VectorWritable result=new VectorWritable();
+            result.set(v);
+
+            context.write(key,result);
+        }
+    }
+
+    public static class ReduceWork
+            extends Reducer<LongWritable,VectorWritable, LongWritable, Text> {
+
+        @Override
+        protected void setup(Context context) throws IOException, InterruptedException {
+            if(dimMap.isEmpty()){
+                Path[] cacheFiles = DistributedCache.getLocalCacheFiles(context
+                        .getConfiguration());
+                File file=new File(cacheFiles[0].toString());
+                BufferedReader reader=new BufferedReader(new FileReader(file));
+                String temp;
+                int count=0;
+                while ((temp=reader.readLine())!=null){
+                    String []ss=temp.split((new byte[]{1}).toString());
+                    dimMap.put(ss[0].trim(), count++);
+                }
+            }
+        }
+
+        public void reduce(LongWritable key, Iterable<VectorWritable> values,
                            Context context
         ) throws IOException, InterruptedException {
 
 
 
-            String word = "";
-            String exclude="其他";
-            boolean firest=true;
-            for(Text val:values){
-                String value=val.toString();
-                if (value.equals(exclude)) continue;
-                if(firest){
-                    word=value;
-                    firest=false;
-                }else if(!word.contains(value)){//去重
-                    word+=","+val.toString();
+            Vector v=new DenseVector(dimMap.size());
+            for(VectorWritable e:values){
+                Vector tmp=e.get();
+                for(int i=0;i< tmp.size();i++){
+                    if(tmp.get(i)>0){
+                        v.set(i,tmp.get(i));
+                    }
+                }
+            }
+
+            String word="";
+            boolean first=true;
+            for(int i=0;i<v.size();i++){
+                double value=v.get(i);
+                if(first){
+                    word+=value;
+                    first=false;
+                }else{//去重
+                    word+="\t"+value;
                 }
             }
             context.write(key,new Text(word));
@@ -86,7 +153,7 @@ public class PrepareKMeans {
         Configuration conf = new Configuration();
         String[] otherArgs = new GenericOptionsParser(conf, args).getRemainingArgs();
         if (otherArgs.length != 2) {
-            System.err.println("Usage: hadoop -jar xx.jar com.chinaunicom.datalabs.mdm.hadoop.boray.PrepareKMeans <in> <out>");
+            System.err.println("Usage: hadoop -jar xx.jar com.chinaunicom.datalabs.mdm.hadoop.boray.PrepareKMeans /user/hive/warehouse/bj_cu_data.db/user_interest_tbl/ <out>");
             System.exit(2);
         }
         Job job = new Job(conf, "prapare vector for kmeans");
@@ -97,7 +164,7 @@ public class PrepareKMeans {
         job.setInputFormatClass(TextInputFormat.class);
 
         job.setMapOutputKeyClass(LongWritable.class);
-        job.setMapOutputValueClass(Text.class);
+        job.setMapOutputValueClass(VectorWritable.class);
 
         job.setOutputKeyClass(LongWritable.class);
         job.setOutputValueClass(Text.class);
