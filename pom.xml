@@ -19,6 +19,11 @@
         </repository>
 
         <repository>
+            <id>oschina</id>
+            <name>oschina</name>
+            <url>http://maven.oschina.net/content/groups/public/</url>
+        </repository>
+        <repository>
             <id>sonatype</id>
             <name>sonatype</name>
             <url>http://repository.sonatype.org/content/groups/public/</url>
@@ -70,9 +75,36 @@
         <apache.common.math>3.3</apache.common.math>
         <protobuf.version>2.5.0</protobuf.version>
         <hadoop.version>2.4.0</hadoop.version>
+        <mahout.version>0.8</mahout.version>
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>org.apache.mahout</groupId>
+            <artifactId>mahout-core</artifactId>
+            <version>${mahout.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.mahout</groupId>
+            <artifactId>mahout-integration</artifactId>
+            <version>${mahout.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.mortbay.jetty</groupId>
+                    <artifactId>jetty</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.cassandra</groupId>
+                    <artifactId>cassandra-all</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>me.prettyprint</groupId>
+                    <artifactId>hector-core</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
@@ -117,7 +149,7 @@
 
         <dependency>
             <groupId>org.apache.spark</groupId>
-            <artifactId>spark-mllib_2.10</artifactId>
+            <artifactId>spark-mllib_2.11</artifactId>
             <version>1.2.0</version>
         </dependency>
 

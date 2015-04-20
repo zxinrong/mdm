@@ -1,6 +1,8 @@
 package com.chinaunicom.datalabs.mdm.spark;
 
 import com.google.common.collect.Lists;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.Text;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
@@ -9,6 +11,7 @@ import org.apache.spark.mllib.clustering.KMeans;
 import org.apache.spark.mllib.clustering.KMeansModel;
 import org.apache.spark.mllib.linalg.Vector;
 import org.apache.spark.mllib.linalg.Vectors;
+import org.apache.spark.rdd.HadoopRDD;
 
 import java.util.List;
 
@@ -19,6 +22,14 @@ import static org.junit.Assert.assertEquals;
  * Created by xinrong on 2014/10/30.
  */
 public class SparkKMeans {
+    public static void kmeans(){
+        SparkConf sconf=new SparkConf().setAppName("kmeans");
+
+        JavaSparkContext jsc=new JavaSparkContext(sconf);
+
+        JavaRDD<String> rdd= jsc.textFile("");
+        rdd.count();
+    }
 
     public static void main(String...args){
         if (args.length < 1) {

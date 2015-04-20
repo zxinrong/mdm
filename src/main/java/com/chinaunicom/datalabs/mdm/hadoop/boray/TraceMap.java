@@ -4,9 +4,11 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.filecache.DistributedCache;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
+//import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
@@ -20,6 +22,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -30,7 +33,6 @@ import java.util.*;
  */
 public class TraceMap {
     public static HashMap<String,String> location= Maps.newHashMap();
-    public static String location_file="site_list";
     private static double EARTH_RADIUS = 6378.137;//地球半径
     public static SimpleDateFormat format=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
@@ -139,7 +141,9 @@ public class TraceMap {
     public static class ReduceWork extends Reducer<LongWritable,Text, LongWritable, Text>{
         @Override
         protected void setup(Context context) throws IOException, InterruptedException {
-            File file=new File(location_file);
+            Path[] cacheFiles = DistributedCache.getLocalCacheFiles(context
+                    .getConfiguration());
+            File file=new File(cacheFiles[0].toString());
             BufferedReader reader=new BufferedReader(new FileReader(file));
             String temp;
             while ((temp=reader.readLine())!=null){
@@ -213,8 +217,14 @@ public class TraceMap {
 
         FileInputFormat.addInputPath(job, new Path(otherArgs[2]));
         FileOutputFormat.setOutputPath(job, new Path(otherArgs[3]));
-        job.setCacheFiles(new URI[]{new URI("/input/site_list")});
 
+        DistributedCache.createSymlink(job.getConfiguration());//
+        try {
+            DistributedCache.addCacheFile(new URI("/input/site_list"), job.getConfiguration());
+        } catch (URISyntaxException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        }
         System.exit(job.waitForCompletion(true) ? 0 : 1);
     }
 }

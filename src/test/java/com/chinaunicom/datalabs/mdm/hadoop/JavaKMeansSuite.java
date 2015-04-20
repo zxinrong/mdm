@@ -15,9 +15,10 @@
  * limitations under the License.
  */
 
-package com.chinaunicom.datalabs.mdm.spark;
+package com.chinaunicom.datalabs.mdm.hadoop;
 
 import com.google.common.collect.Lists;
+import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.mllib.clustering.KMeans;
@@ -38,7 +39,10 @@ public class JavaKMeansSuite implements Serializable {
 
   @Before
   public void setUp() {
-    sc = new JavaSparkContext("local", "JavaKMeans");
+    SparkConf conf=new SparkConf();
+//    conf.set("Master","spark://namenode1:7077");
+    sc = new JavaSparkContext("spark://namenode1:7077", "JavaKMeans");
+
   }
 
   @After
