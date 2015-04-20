@@ -47,14 +47,11 @@ public class PrepareKMeans {
                 }
             }
         }
-
-
-
         public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
             String ss[]=value.toString().trim().split("\\t");
-            LongWritable key_word=new LongWritable(Long.parseLong(ss[0].trim()));
+            LongWritable key_word=new LongWritable(Long.parseLong(ss[1].trim()));
             Vector v=new DenseVector(dimMap.size());
-            v.set(dimMap.get(ss[0]),Double.parseDouble(ss[5]));
+            v.set(dimMap.get(ss[2]),Double.parseDouble(ss[5]));
             VectorWritable vw=new VectorWritable();
             vw.set(v);
             context.write(key_word,vw);
@@ -87,7 +84,7 @@ public class PrepareKMeans {
             for(VectorWritable e:values){
                 Vector tmp=e.get();
                 for(int i=0;i< tmp.size();i++){
-                    if(tmp.get(i)>0){
+                    if(tmp.get(i)>10){
                         v.set(i,tmp.get(i));
                     }
                 }
@@ -141,7 +138,7 @@ public class PrepareKMeans {
                 if(first){
                     word+=value;
                     first=false;
-                }else{//去重
+                }else{
                     word+="\t"+value;
                 }
             }
@@ -159,7 +156,7 @@ public class PrepareKMeans {
         Job job = new Job(conf, "prapare vector for kmeans");
         job.setJarByClass(PrepareKMeans.class);
         job.setMapperClass(MapWork.class);
-        job.setCombinerClass(ReduceWork.class);
+        job.setCombinerClass(CombineWork.class);
         job.setReducerClass(ReduceWork.class);
         job.setInputFormatClass(TextInputFormat.class);
 
