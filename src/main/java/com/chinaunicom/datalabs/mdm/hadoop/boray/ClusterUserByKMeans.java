@@ -52,7 +52,6 @@ public class ClusterUserByKMeans {
 
 
     public static void main(String[] args) throws Exception {
-        String localFile = args[4];
         String inPath = args[0];
         String seqFile = inPath + "/seqfile";
         String seeds = inPath + "/seeds";
@@ -65,7 +64,7 @@ public class ClusterUserByKMeans {
         GenericOptionsParser parser=new GenericOptionsParser(conf, args);
         String[] otherArgs = parser.getRemainingArgs();
         if (otherArgs.length != 4) {
-            System.err.println("Usage: hadoop jar mdm.jar com.chinaunicom.datalabs.mdm.hadoop.boray.TraceWork -file site_list <in> <out>");
+            System.err.println("Usage: hadoop jar mdm.jar com.chinaunicom.datalabs.mdm.hadoop.boray.ClusterUserByKMeans <in> <out>");
             System.exit(2);
         }
 
