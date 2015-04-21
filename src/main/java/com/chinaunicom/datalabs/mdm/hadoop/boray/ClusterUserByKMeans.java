@@ -55,7 +55,7 @@ public class ClusterUserByKMeans {
         Configuration conf = new Configuration();
         GenericOptionsParser parser=new GenericOptionsParser(conf, args);
         String[] otherArgs = parser.getRemainingArgs();
-        if (otherArgs.length != 1) {
+        if (otherArgs.length != 2) {
             System.err.println("Usage: hadoop jar mdm.jar com.chinaunicom.datalabs.mdm.hadoop.boray.ClusterUserByKMeans <in> <out>");
             System.exit(2);
         }
@@ -68,7 +68,7 @@ public class ClusterUserByKMeans {
 
 //        InputDriver.runJob(new Path(inPath), new Path(seqFile), "org.apache.mahout.math.RandomAccessSparseVector");
 
-        int k = 10;
+        int k = Integer.parseInt(args[1].trim());
         Path seqFilePath = new Path(seqFile);
         Path clustersSeeds = new Path(seeds);
         DistanceMeasure measure = new NewDistanceMeasure();
