@@ -52,25 +52,23 @@ public class ClusterUserByKMeans {
 
 
     public static void main(String[] args) throws Exception {
+        Configuration conf = new Configuration();
+        GenericOptionsParser parser=new GenericOptionsParser(conf, args);
+        String[] otherArgs = parser.getRemainingArgs();
+        if (otherArgs.length != 1) {
+            System.err.println("Usage: hadoop jar mdm.jar com.chinaunicom.datalabs.mdm.hadoop.boray.ClusterUserByKMeans <in> <out>");
+            System.exit(2);
+        }
+
         String inPath = args[0];
         String seqFile = inPath + "/seqfile";
         String seeds = inPath + "/seeds";
         String outPath = inPath + "/result/";
         String clusteredPoints = outPath + "/clusteredPoints";
 
+//        InputDriver.runJob(new Path(inPath), new Path(seqFile), "org.apache.mahout.math.RandomAccessSparseVector");
 
-
-        Configuration conf = new Configuration();
-        GenericOptionsParser parser=new GenericOptionsParser(conf, args);
-        String[] otherArgs = parser.getRemainingArgs();
-        if (otherArgs.length != 4) {
-            System.err.println("Usage: hadoop jar mdm.jar com.chinaunicom.datalabs.mdm.hadoop.boray.ClusterUserByKMeans <in> <out>");
-            System.exit(2);
-        }
-
-        InputDriver.runJob(new Path(inPath), new Path(seqFile), "org.apache.mahout.math.RandomAccessSparseVector");
-
-        int k = 3;
+        int k = 10;
         Path seqFilePath = new Path(seqFile);
         Path clustersSeeds = new Path(seeds);
         DistanceMeasure measure = new NewDistanceMeasure();

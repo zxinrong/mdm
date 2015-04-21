@@ -12,6 +12,7 @@ import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat;
 import org.apache.hadoop.util.GenericOptionsParser;
 import org.apache.mahout.math.*;
 
@@ -24,54 +25,55 @@ import java.net.URISyntaxException;
 import java.util.HashMap;
 
 /**
- * 合并行 
+ * 合并行
  * Created by zhangxr103 on 2014/10/30.
  */
 public class PrepareKMeans {
-    public static HashMap<String,Integer> dimMap = Maps.newHashMap();
+    public static HashMap<String, Integer> dimMap = Maps.newHashMap();
 
     public static class MapWork
             extends Mapper<Object, Text, LongWritable, VectorWritable> {
         @Override
         protected void setup(Mapper.Context context) throws IOException, InterruptedException {
-            if(dimMap.isEmpty()){
+            if (dimMap.isEmpty()) {
                 Path[] cacheFiles = DistributedCache.getLocalCacheFiles(context
                         .getConfiguration());
-                File file=new File(cacheFiles[0].toString());
-                BufferedReader reader=new BufferedReader(new FileReader(file));
+                File file = new File(cacheFiles[0].toString());
+                BufferedReader reader = new BufferedReader(new FileReader(file));
                 String temp;
-                int count=0;
-                while ((temp=reader.readLine())!=null){
-                    String []ss=temp.split(new String(new byte[]{1}));
+                int count = 0;
+                while ((temp = reader.readLine()) != null) {
+                    String[] ss = temp.split(new String(new byte[]{1}));
                     dimMap.put(ss[0].trim(), count++);
                 }
             }
         }
+
         public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
-            String ss[]=value.toString().trim().split("\\t");
-            LongWritable key_word=new LongWritable(Long.parseLong(ss[1].trim()));
-            Vector v=new DenseVector(dimMap.size());
-            v.set(dimMap.get(ss[2]),Double.parseDouble(ss[5]));
-            VectorWritable vw=new VectorWritable();
+            String ss[] = value.toString().trim().split("\\t");
+            LongWritable key_word = new LongWritable(Long.parseLong(ss[1].trim()));
+            Vector v = new DenseVector(dimMap.size());
+            v.set(dimMap.get(ss[2]), Double.parseDouble(ss[5]));
+            VectorWritable vw = new VectorWritable();
             vw.set(v);
-            context.write(key_word,vw);
+            context.write(key_word, vw);
         }
     }
 
     public static class CombineWork
-            extends Reducer<LongWritable,VectorWritable, LongWritable, VectorWritable> {
+            extends Reducer<LongWritable, VectorWritable, LongWritable, VectorWritable> {
 
         @Override
         protected void setup(Context context) throws IOException, InterruptedException {
-            if(dimMap.isEmpty()){
+            if (dimMap.isEmpty()) {
                 Path[] cacheFiles = DistributedCache.getLocalCacheFiles(context
                         .getConfiguration());
-                File file=new File(cacheFiles[0].toString());
-                BufferedReader reader=new BufferedReader(new FileReader(file));
+                File file = new File(cacheFiles[0].toString());
+                BufferedReader reader = new BufferedReader(new FileReader(file));
                 String temp;
-                int count=0;
-                while ((temp=reader.readLine())!=null){
-                    String []ss=temp.split(new String(new byte[]{1}));
+                int count = 0;
+                while ((temp = reader.readLine()) != null) {
+                    String[] ss = temp.split(new String(new byte[]{1}));
                     dimMap.put(ss[0].trim(), count++);
                 }
             }
@@ -80,36 +82,36 @@ public class PrepareKMeans {
         public void reduce(LongWritable key, Iterable<VectorWritable> values,
                            Context context
         ) throws IOException, InterruptedException {
-            Vector v=new DenseVector(dimMap.size());
-            for(VectorWritable e:values){
-                Vector tmp=e.get();
-                for(int i=0;i< tmp.size();i++){
-                    if(tmp.get(i)>10){
-                        v.set(i,tmp.get(i));
+            Vector v = new DenseVector(dimMap.size());
+            for (VectorWritable e : values) {
+                Vector tmp = e.get();
+                for (int i = 0; i < tmp.size(); i++) {
+                    if (tmp.get(i) > 10) {
+                        v.set(i, tmp.get(i));
                     }
                 }
             }
-            VectorWritable result=new VectorWritable();
+            VectorWritable result = new VectorWritable();
             result.set(v);
 
-            context.write(key,result);
+            context.write(key, result);
         }
     }
 
     public static class ReduceWork
-            extends Reducer<LongWritable,VectorWritable, LongWritable, Text> {
+            extends Reducer<LongWritable, VectorWritable, LongWritable, VectorWritable> {
 
         @Override
         protected void setup(Context context) throws IOException, InterruptedException {
-            if(dimMap.isEmpty()){
+            if (dimMap.isEmpty()) {
                 Path[] cacheFiles = DistributedCache.getLocalCacheFiles(context
                         .getConfiguration());
-                File file=new File(cacheFiles[0].toString());
-                BufferedReader reader=new BufferedReader(new FileReader(file));
+                File file = new File(cacheFiles[0].toString());
+                BufferedReader reader = new BufferedReader(new FileReader(file));
                 String temp;
-                int count=0;
-                while ((temp=reader.readLine())!=null){
-                    String []ss=temp.split(new String(new byte[]{1}));
+                int count = 0;
+                while ((temp = reader.readLine()) != null) {
+                    String[] ss = temp.split(new String(new byte[]{1}));
                     dimMap.put(ss[0].trim(), count++);
                 }
             }
@@ -120,29 +122,29 @@ public class PrepareKMeans {
         ) throws IOException, InterruptedException {
 
 
-
-            Vector v=new DenseVector(dimMap.size());
-            for(VectorWritable e:values){
-                Vector tmp=e.get();
-                for(int i=0;i< tmp.size();i++){
-                    if(tmp.get(i)>0){
-                        v.set(i,tmp.get(i));
+            Vector v = new DenseVector(dimMap.size());
+            for (VectorWritable e : values) {
+                Vector tmp = e.get();
+                for (int i = 0; i < tmp.size(); i++) {
+                    if (tmp.get(i) > 0) {
+                        v.set(i, tmp.get(i));
                     }
                 }
             }
 
-            String word="";
-            boolean first=true;
-            for(int i=0;i<v.size();i++){
-                double value=v.get(i);
-                if(first){
-                    word+=value;
-                    first=false;
-                }else{
-                    word+="\t"+value;
-                }
-            }
-            context.write(key,new Text(word));
+//            String word="";
+//            boolean first=true;
+//            for(int i=0;i<v.size();i++){
+//                double value=v.get(i);
+//                if(first){
+//                    word+=value;
+//                    first=false;
+//                }else{
+//                    word+="\t"+value;
+//                }
+//            }
+
+            context.write(key, new VectorWritable(v));
         }
     }
 
@@ -164,7 +166,8 @@ public class PrepareKMeans {
         job.setMapOutputValueClass(VectorWritable.class);
 
         job.setOutputKeyClass(LongWritable.class);
-        job.setOutputValueClass(Text.class);
+        job.setOutputValueClass(VectorWritable.class);
+        job.setOutputFormatClass(SequenceFileOutputFormat.class);
 
         FileInputFormat.addInputPath(job, new Path(otherArgs[0]));
         FileOutputFormat.setOutputPath(job, new Path(otherArgs[1]));
