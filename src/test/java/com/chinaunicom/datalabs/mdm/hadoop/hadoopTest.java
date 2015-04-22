@@ -50,11 +50,13 @@ public class hadoopTest {
 
     @Test
     public void test2(){
-        String temp="3481489711234338\t2014-10-12 07:35:12\tWBJ00429\tWBJ00518";
-        String ss=temp.substring(0, temp.indexOf("\t"));
+        String temp="sadf";
+        changeString(temp);//String 也是传值
+        System.out.println(temp);
+    }
 
-        System.out.println(temp.substring(0,temp.indexOf("\t"))+"===="+temp.indexOf("\t"));
-
+    private void changeString(String temp) {
+        temp="asdfdfa";
     }
 
     @Test
