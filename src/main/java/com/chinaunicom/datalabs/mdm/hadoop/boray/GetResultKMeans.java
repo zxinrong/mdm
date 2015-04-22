@@ -16,8 +16,6 @@ import org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat;
 import org.apache.hadoop.util.GenericOptionsParser;
 import org.apache.mahout.clustering.classify.WeightedVectorWritable;
 
-import org.apache.mahout.math.VectorWritable;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
