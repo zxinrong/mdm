@@ -1,16 +1,21 @@
 package com.chinaunicom.datalabs.mdm.hadoop;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.io.LongWritable;
-import org.apache.hadoop.io.Text;
+import org.apache.hadoop.fs.*;
+import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
+import org.apache.mahout.clustering.Cluster;
+import org.apache.mahout.clustering.classify.ClusterClassifier;
+import org.apache.mahout.clustering.iterator.ClusterWritable;
+import org.apache.mahout.clustering.iterator.ClusteringPolicy;
+import org.apache.mahout.common.iterator.sequencefile.PathFilters;
+import org.apache.mahout.common.iterator.sequencefile.PathType;
+import org.apache.mahout.common.iterator.sequencefile.SequenceFileDirValueIterator;
 import org.junit.Test;
 
 import java.io.*;
-import java.text.ParseException;
+import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -141,5 +146,45 @@ public class hadoopTest {
 //        return list;
 //    }
 
+    @Test
+    public void test4() throws URISyntaxException, IOException {
+        Path path=new Path("hdfs://namenode2:9000/input/kmeans/result/clusters-10-final/part-r-00000");
+        Configuration conf=new Configuration();
+        FileSystem fs=path.getFileSystem(conf);
+        InputStream in=fs.open(new Path("hdfs://namenode2:9000/input/kmeans/result/clusters-10-final/part-r-00000"));
 
+
+
+        Path clustersInPath = new Path("hdfs://namenode2:9000/input/kmeans/result/");
+        List<Cluster> clusterModels = populateClusterModels(clustersInPath, conf);
+        ClusteringPolicy policy = ClusterClassifier
+                .readPolicy(finalClustersPath(clustersInPath));
+        ClusterClassifier clusterClassifier = new ClusterClassifier(clusterModels, policy);
+
+
+
+
+    }
+
+    private static Path finalClustersPath(Path clusterOutputPath) throws IOException {
+        FileSystem fileSystem = clusterOutputPath.getFileSystem(new Configuration());
+        FileStatus[] clusterFiles = fileSystem.listStatus(clusterOutputPath, PathFilters.finalPartFilter());
+        return clusterFiles[0].getPath();
+    }
+
+    public static List<Cluster> populateClusterModels(Path clusterOutputPath, Configuration conf) throws IOException {
+        List<Cluster> clusters = Lists.newArrayList();
+        FileSystem fileSystem = clusterOutputPath.getFileSystem(conf);
+        FileStatus[] clusterFiles = fileSystem.listStatus(clusterOutputPath, PathFilters.finalPartFilter());
+        Iterator<?> it = new SequenceFileDirValueIterator<Writable>(
+                clusterFiles[0].getPath(), PathType.LIST, PathFilters.partFilter(),
+                null, false, conf);
+        while (it.hasNext()) {
+            ClusterWritable next = (ClusterWritable) it.next();
+            Cluster cluster = next.getValue();
+            cluster.configure(conf);
+            clusters.add(cluster);
+        }
+        return clusters;
+    }
 }

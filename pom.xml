@@ -75,7 +75,7 @@
         <apache.common.math>3.3</apache.common.math>
         <protobuf.version>2.5.0</protobuf.version>
         <hadoop.version>2.4.0</hadoop.version>
-        <mahout.version>0.8</mahout.version>
+        <mahout.version>0.9</mahout.version>
     </properties>
 
     <dependencies>

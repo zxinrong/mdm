@@ -4,9 +4,11 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.util.GenericOptionsParser;
+import org.apache.mahout.clustering.conversion.InputDriver;
 import org.apache.mahout.clustering.kmeans.KMeansDriver;
 import org.apache.mahout.clustering.kmeans.RandomSeedGenerator;
 import org.apache.mahout.common.distance.DistanceMeasure;
+import org.apache.mahout.common.distance.EuclideanDistanceMeasure;
 import org.apache.mahout.common.distance.SquaredEuclideanDistanceMeasure;
 import org.apache.mahout.math.DenseVector;
 import org.apache.mahout.math.Vector;
@@ -70,16 +72,15 @@ public class ClusterUserByKMeans {
         int k = Integer.parseInt(args[1].trim());
         Path seqFilePath = new Path(seqFile);
         Path clustersSeeds = new Path(seeds);
-        DistanceMeasure measure = new NewDistanceMeasure();
-        clustersSeeds = RandomSeedGenerator.buildRandom(conf, seqFilePath, clustersSeeds, k, measure);
-        KMeansDriver.run(conf, seqFilePath, clustersSeeds, new Path(outPath), measure, 0.01, 10, true,0.01, false);
+        clustersSeeds = RandomSeedGenerator.buildRandom(conf, seqFilePath, clustersSeeds, k, new EuclideanDistanceMeasure());
+        KMeansDriver.run(conf, seqFilePath, clustersSeeds, new Path(outPath), 0.01, 20, true,0.01, false);
 
-        Path outGlobPath = new Path(outPath, "clusters-*-final");
-        Path clusteredPointsPath = new Path(clusteredPoints);
-        System.out.printf("Dumping out clusters from clusters: %s and clusteredPoints: %s\n", outGlobPath, clusteredPointsPath);
-
-        ClusterDumper clusterDumper = new ClusterDumper(outGlobPath, clusteredPointsPath);
-        clusterDumper.printClusters(null);
+//        Path outGlobPath = new Path(outPath, "clusters-*-final");
+//        Path clusteredPointsPath = new Path(clusteredPoints);
+//        System.out.printf("Dumping out clusters from clusters: %s and clusteredPoints: %s\n", outGlobPath, clusteredPointsPath);
+//
+//        ClusterDumper clusterDumper = new ClusterDumper(outGlobPath, clusteredPointsPath);
+//        clusterDumper.printClusters(null);
     }
 
     public static Job config() throws IOException {
