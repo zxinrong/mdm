@@ -2,7 +2,7 @@
 #准备数据
 hdfs dfs -copyFromLocal /tracefile /input/traceDir
 #执行计算
-hadoop jar mdm-jar-with-dependencies.jar com.chinaunicom.datalabs.mdm.hadoop.boray.TraceMap /input/traceDir /result/trace/${date}
+hadoop jar mdm-jar-with-dependencies.jar com.chinaunicom.datalabs.mdm.hadoop.boray.TraceMap /input/trace /result/trace/${date}
 
 #聚类脚本
 #准备数据
