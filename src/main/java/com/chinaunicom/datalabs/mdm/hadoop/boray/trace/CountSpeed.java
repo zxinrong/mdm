@@ -1,4 +1,4 @@
-package com.chinaunicom.datalabs.mdm.hadoop.boray;
+package com.chinaunicom.datalabs.mdm.hadoop.boray.trace;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
