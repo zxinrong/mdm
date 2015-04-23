@@ -1,4 +1,4 @@
-package com.chinaunicom.datalabs.mdm.hadoop.boray;
+package com.chinaunicom.datalabs.mdm.hadoop.boray.cluster;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.filecache.DistributedCache;
@@ -12,7 +12,6 @@ import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
-import org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.util.GenericOptionsParser;
 import org.apache.mahout.clustering.classify.WeightedVectorWritable;
@@ -59,7 +58,7 @@ public class GetResultKMeans {
         Configuration conf = new Configuration();
         String[] otherArgs = new GenericOptionsParser(conf, args).getRemainingArgs();
         if (otherArgs.length != 2) {
-            System.err.println("Usage: hadoop -jar xx.jar com.chinaunicom.datalabs.mdm.hadoop.boray.GetResultKMeans <in> <out>");
+            System.err.println("Usage: hadoop -jar xx.jar com.chinaunicom.datalabs.mdm.hadoop.boray.cluster.GetResultKMeans <in> <out>");
             System.exit(2);
         }
         Job job = new Job(conf, "get result vector for kmeans");

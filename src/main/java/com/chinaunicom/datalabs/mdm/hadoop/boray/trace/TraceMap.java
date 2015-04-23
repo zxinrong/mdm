@@ -1,4 +1,4 @@
-package com.chinaunicom.datalabs.mdm.hadoop.boray;
+package com.chinaunicom.datalabs.mdm.hadoop.boray.trace;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -199,7 +199,7 @@ public class TraceMap {
         GenericOptionsParser parser=new GenericOptionsParser(conf, args);
         String[] otherArgs = parser.getRemainingArgs();
         if (otherArgs.length != 4) {
-            System.err.println("Usage: hadoop jar mdm.jar com.chinaunicom.datalabs.mdm.hadoop.boray.TraceWork -file site_list <in> <out>");
+            System.err.println("Usage: hadoop jar mdm.jar com.chinaunicom.datalabs.mdm.hadoop.boray.TraceMap -file site_list <in> <out>");
             System.exit(2);
         }
         System.err.println(Arrays.toString(otherArgs));

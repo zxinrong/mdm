@@ -1,4 +1,4 @@
-package com.chinaunicom.datalabs.mdm.hadoop.boray;
+package com.chinaunicom.datalabs.mdm.hadoop.boray.cluster;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
@@ -57,7 +57,7 @@ public class ClusterUserByKMeans {
         GenericOptionsParser parser=new GenericOptionsParser(conf, args);
         String[] otherArgs = parser.getRemainingArgs();
         if (otherArgs.length != 2) {
-            System.err.println("Usage: hadoop jar mdm.jar com.chinaunicom.datalabs.mdm.hadoop.boray.ClusterUserByKMeans <in> <out>");
+            System.err.println("Usage: hadoop jar mdm.jar com.chinaunicom.datalabs.mdm.hadoop.boray.cluster.ClusterUserByKMeans <in> <out>");
             System.exit(2);
         }
 

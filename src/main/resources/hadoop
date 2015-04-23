@@ -1,0 +1,15 @@
+#计算地图轨迹及交通工具
+#准备数据
+hdfs dfs -copyFromLocal /tracefile /input/traceDir
+#执行计算
+hadoop jar mdm-jar-with-dependencies.jar com.chinaunicom.datalabs.mdm.hadoop.boray.TraceMap /input/traceDir /result/trace/${date}
+
+#聚类脚本
+#准备数据
+hadoop jar mdm-jar-with-dependencies.jar com.chinaunicom.datalabs.mdm.hadoop.boray.cluster.PrepareKMeans /user/hive/warehouse/bj_cu_data.db/user_interest_tbl/ /input/kmeans/seqfile
+#聚类
+hadoop jar mdm-jar-with-dependencies.jar com.chinaunicom.datalabs.mdm.hadoop.boray.cluster.ClusterUserByKMeans /input/kmeans 18
+#输出结果
+hadoop jar mdm-jar-with-dependencies.jar com.chinaunicom.datalabs.mdm.hadoop.boray.cluster.GetResultKMeans /input/kmeans/result/clusteredPoints /result/kmeans/${date}
+
+

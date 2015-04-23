@@ -1,4 +1,4 @@
-package com.chinaunicom.datalabs.mdm.hadoop.boray;
+package com.chinaunicom.datalabs.mdm.hadoop.boray.cluster;
 
 import com.google.common.collect.Maps;
 import org.apache.hadoop.conf.Configuration;
@@ -154,7 +154,7 @@ public class PrepareKMeans {
         Configuration conf = new Configuration();
         String[] otherArgs = new GenericOptionsParser(conf, args).getRemainingArgs();
         if (otherArgs.length != 2) {
-            System.err.println("Usage: hadoop -jar xx.jar com.chinaunicom.datalabs.mdm.hadoop.boray.PrepareKMeans /user/hive/warehouse/bj_cu_data.db/user_interest_tbl/ <out>");
+            System.err.println("Usage: hadoop -jar xx.jar com.chinaunicom.datalabs.mdm.hadoop.boray.cluster.PrepareKMeans /user/hive/warehouse/bj_cu_data.db/user_interest_tbl/ <out>");
             System.exit(2);
         }
         Job job = new Job(conf, "prapare vector for kmeans");
