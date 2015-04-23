@@ -34,7 +34,7 @@ public class PrepareKMeans {
     public static HashMap<String, Integer> dimMap = Maps.newHashMap();
 
     public static class MapWork
-            extends Mapper<Object, Text, LongWritable, VectorWritable> {
+            extends Mapper<Object, Text, Text, VectorWritable> {
         @Override
         protected void setup(Mapper.Context context) throws IOException, InterruptedException {
             if (dimMap.isEmpty()) {
@@ -53,17 +53,16 @@ public class PrepareKMeans {
 
         public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
             String ss[] = value.toString().trim().split("\\t");
-            LongWritable key_word = new LongWritable(Long.parseLong(ss[1].trim()));
             Vector v = new DenseVector(dimMap.size());
             v.set(dimMap.get(ss[2]), Double.parseDouble(ss[5]));
             VectorWritable vw = new VectorWritable();
             vw.set(v);
-            context.write(key_word, vw);
+            context.write(new Text(ss[1].trim()), vw);
         }
     }
 
     public static class CombineWork
-            extends Reducer<LongWritable, VectorWritable, LongWritable, VectorWritable> {
+            extends Reducer<Text, VectorWritable, Text, VectorWritable> {
 
         @Override
         protected void setup(Context context) throws IOException, InterruptedException {
@@ -81,7 +80,7 @@ public class PrepareKMeans {
             }
         }
 
-        public void reduce(LongWritable key, Iterable<VectorWritable> values,
+        public void reduce(Text key, Iterable<VectorWritable> values,
                            Context context
         ) throws IOException, InterruptedException {
             Vector v = new DenseVector(dimMap.size());
@@ -101,7 +100,7 @@ public class PrepareKMeans {
     }
 
     public static class ReduceWork
-            extends Reducer<LongWritable, VectorWritable, LongWritable, VectorWritable> {
+            extends Reducer<Text, VectorWritable, Text, VectorWritable> {
 
         @Override
         protected void setup(Context context) throws IOException, InterruptedException {
@@ -119,7 +118,7 @@ public class PrepareKMeans {
             }
         }
 
-        public void reduce(LongWritable key, Iterable<VectorWritable> values,
+        public void reduce(Text key, Iterable<VectorWritable> values,
                            Context context
         ) throws IOException, InterruptedException {
 
@@ -167,7 +166,7 @@ public class PrepareKMeans {
         job.setMapOutputKeyClass(LongWritable.class);
         job.setMapOutputValueClass(VectorWritable.class);
 
-        job.setOutputKeyClass(LongWritable.class);
+        job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(VectorWritable.class);
         job.setOutputFormatClass(SequenceFileOutputFormat.class);
 

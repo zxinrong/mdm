@@ -148,14 +148,14 @@ public class hadoopTest {
 
     @Test
     public void test4() throws URISyntaxException, IOException {
-        Path path=new Path("hdfs://namenode2:9000/input/kmeans/result/clusters-10-final/part-r-00000");
+        Path path=new Path("hdfs://namenode1:9000/input/kmeans/result/clusters-18/part-r-00000");
         Configuration conf=new Configuration();
         FileSystem fs=path.getFileSystem(conf);
-        InputStream in=fs.open(new Path("hdfs://namenode2:9000/input/kmeans/result/clusters-10-final/part-r-00000"));
+        InputStream in=fs.open(new Path("hdfs://namenode1:9000/input/kmeans/result/clusters-18/part-r-00000"));
 
 
 
-        Path clustersInPath = new Path("hdfs://namenode2:9000/input/kmeans/result/");
+        Path clustersInPath = new Path("hdfs://namenode1:9000/input/kmeans/result/");
         List<Cluster> clusterModels = populateClusterModels(clustersInPath, conf);
         ClusteringPolicy policy = ClusterClassifier
                 .readPolicy(finalClustersPath(clustersInPath));
