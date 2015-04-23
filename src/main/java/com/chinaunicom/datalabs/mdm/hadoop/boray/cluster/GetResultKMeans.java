@@ -5,6 +5,7 @@ import org.apache.hadoop.filecache.DistributedCache;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Partitioner;
@@ -15,6 +16,7 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.util.GenericOptionsParser;
 import org.apache.mahout.clustering.classify.WeightedVectorWritable;
+import org.apache.mahout.math.VectorWritable;
 
 import java.io.IOException;
 import java.net.URI;
@@ -27,30 +29,28 @@ import java.net.URISyntaxException;
 public class GetResultKMeans {
 
     public static class MapWork
-            extends Mapper<IntWritable,WeightedVectorWritable,  LongWritable,IntWritable> {
-        LongWritable dw=new LongWritable();
+            extends Mapper<IntWritable,WeightedVectorWritable, WeightedVectorWritable,IntWritable> {
+
         public void map(IntWritable key, WeightedVectorWritable value, Context context) throws IOException, InterruptedException {
-            Double val= value.getVector().get(0);
-            dw.set(val.longValue());
-            context.write(dw,key);
+            context.write(value,key);
         }
     }
 
     public static class PartitionWork
-            extends Partitioner <LongWritable,IntWritable>{
+            extends Partitioner <WeightedVectorWritable,IntWritable>{
         @Override
-        public int getPartition(LongWritable k, IntWritable v, int i) {
+        public int getPartition(WeightedVectorWritable k, IntWritable v, int i) {
             return v.get();
         }
     }
 
     public static class ReduceWork
-            extends Reducer<LongWritable, IntWritable, LongWritable, IntWritable> {
+            extends Reducer<WeightedVectorWritable, IntWritable, VectorWritable, IntWritable> {
 
-        public void reduce(LongWritable key, Iterable<IntWritable> values,
+        public void reduce(WeightedVectorWritable key, Iterable<IntWritable> values,
                            Context context
         ) throws IOException, InterruptedException {
-            context.write(key,values.iterator().next());
+            context.write(new VectorWritable(key.getVector()),values.iterator().next());
         }
     }
 
@@ -71,10 +71,10 @@ public class GetResultKMeans {
         job.setCombinerClass(ReduceWork.class);
         job.setReducerClass(ReduceWork.class);
 
-        job.setMapOutputKeyClass(LongWritable.class);
+        job.setMapOutputKeyClass(WeightedVectorWritable.class);
         job.setMapOutputValueClass(IntWritable.class);
 
-        job.setOutputKeyClass(LongWritable.class);
+        job.setOutputKeyClass(VectorWritable.class);
         job.setOutputValueClass(IntWritable.class);
         job.setOutputFormatClass(TextOutputFormat.class);
 
