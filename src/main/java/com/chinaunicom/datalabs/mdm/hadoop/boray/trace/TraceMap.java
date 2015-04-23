@@ -198,8 +198,8 @@ public class TraceMap {
         Configuration conf = new Configuration();
         GenericOptionsParser parser=new GenericOptionsParser(conf, args);
         String[] otherArgs = parser.getRemainingArgs();
-        if (otherArgs.length != 4) {
-            System.err.println("Usage: hadoop jar mdm.jar com.chinaunicom.datalabs.mdm.hadoop.boray.TraceMap -file site_list <in> <out>");
+        if (otherArgs.length !=2) {
+            System.err.println("Usage: hadoop jar mdm.jar com.chinaunicom.datalabs.mdm.hadoop.boray.TraceMap  <in> <out>");
             System.exit(2);
         }
         System.err.println(Arrays.toString(otherArgs));
@@ -216,8 +216,8 @@ public class TraceMap {
         job.setOutputKeyClass(LongWritable.class);
         job.setOutputValueClass(Text.class);
 
-        FileInputFormat.addInputPath(job, new Path(otherArgs[2]));
-        FileOutputFormat.setOutputPath(job, new Path(otherArgs[3]));
+        FileInputFormat.addInputPath(job, new Path(otherArgs[0]));
+        FileOutputFormat.setOutputPath(job, new Path(otherArgs[1]));
 
         DistributedCache.createSymlink(job.getConfiguration());//
         try {
