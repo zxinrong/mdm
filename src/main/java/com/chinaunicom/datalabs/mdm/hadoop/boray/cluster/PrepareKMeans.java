@@ -163,7 +163,7 @@ public class PrepareKMeans {
         job.setReducerClass(ReduceWork.class);
         job.setInputFormatClass(TextInputFormat.class);
 
-        job.setMapOutputKeyClass(LongWritable.class);
+        job.setMapOutputKeyClass(Text.class);
         job.setMapOutputValueClass(VectorWritable.class);
 
         job.setOutputKeyClass(Text.class);
